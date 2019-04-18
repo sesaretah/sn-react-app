@@ -1,10 +1,6 @@
 import React from 'react';
 import { Page, Navbar, Block, NavTitle, Link, Toolbar } from 'framework7-react';
-import * as MyActions from "../../actions/MyActions";
-import MyStore from "../../stores/MyStore";
-import MessageStore from "../../stores/MessageStore";
 import { dict} from '../Dict';
-import AdvertCard from './AdvertCard';
 import logo from  "../../images/logo.png";
 import Moment from 'react-moment';
 import 'moment-timezone';

@@ -92,7 +92,7 @@
 }
 
 .ios .toolbar:not(.messagebar).color-blue {
-  background: #65696b;
+  background: #e8f1f3 !important;
 }
 
 .gray {
@@ -180,18 +180,25 @@ background-color: inherit !important;
   color: #ffffff;
 }
 
+.icon .f7-icons{
+  color: #3DB39E !important;
+}
+
+.f7-icons {
+  color: #3DB39E !important;
+}
 
 .ios .navbar {
-  background: #4972ec;
+  background: #e8f1f3;
 }
 
 .ios .toolbar:not(.messagebar).color-blue {
-  background: #4972ec;
+  background: #3DB39E;
 }
 
 .searchbar {
   width: 90%;
-  background: #4972ec !important;
+  background: #3DB39E !important;
 }
 .price {
   float: left;
@@ -210,11 +217,11 @@ background-color: inherit !important;
 }
 
 .ios .searchbar:after {
-  background-color: #4972ec;
+  background-color: #3DB39E;
 }
 
 .ios .navbar {
-  height: 50px;
+  height: 60px;
 }
 
 input:focus ~ .floating-label,
@@ -304,7 +311,7 @@ input:not(:focus):valid ~ .floating-label{
 }
 
 .text-muted {
-  font-size: 8pt;
+  font-size: 9pt;
 color: #717171;
 font-style: oblique;
 }
@@ -328,4 +335,53 @@ font-size: 16px;
 }
 .mh-30 {
 min-height: 30px !important;
+}
+
+.ios .button.color-green.button-fill, .ios .button.color-green.button-fill-ios {
+    background: #5eba00;
+    border-color: transparent;
+}
+
+.mt-5 {
+  margin-top: 5px;
+}
+.nowrp {
+  white-space: nowrap;
+}
+
+.block img {
+  width: 100%;
+  height: auto;
+}
+
+.header-select {
+  background-color: #6e9e9e;
+  border: 1px #40635f solid;
+  padding: 5px;
+  margin-bottom: 2px;
+  max-width: 200px;
+}
+
+.light-blue {
+  color: #3168c1;
+}
+
+.bg-blue-lightest {
+    background-color: #3DB39E !important;
+    color: #3DB39E !important;
+}
+
+
+.ios .navbar:after {
+  background-color: #3DB39E;
+  height: 10px;
+}
+
+.ios .toolbar:before {
+    background-color: #3DB39E;
+    height: 10px;
+}
+
+.mt-1 {
+  margin-top: 10px;
 }

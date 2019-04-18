@@ -27,8 +27,6 @@ import {
 
 import * as MyActions from "../../actions/MyActions";
 import UserStore from "../../stores/UserStore";
-import MessageStore from "../../stores/MessageStore";
-import MyStore from "../../stores/MyStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
 
@@ -43,33 +41,28 @@ export default class Login extends React.Component {
       advertisements: [],
       token: window.localStorage.getItem('token'),
       unseens: 0,
-      username: '',
+      email: '',
       password: '',
     };
   }
 
   componentWillMount() {
-    MyStore.on("change", this.getAdvertisements);
     UserStore.on("logged_in", this.logged_in);
     UserStore.on("not_logged_in", this.not_logged_in);
-    MessageStore.on("unseens", this.getUnseens);
   }
 
   componentWillUnmount() {
-    MyStore.removeListener("change", this.getAdvertisements);
     UserStore.removeListener("logged_in", this.logged_in);
     UserStore.removeListener("not_logged_in", this.not_logged_in);
-    MessageStore.removeListener("unseens", this.getUnseens);
   }
 
   componentDidMount(){
-    MyActions.getMyAdvertisements(this.state);
-    MyActions.getAllUnseens(this.state.token);
+
   }
 
   getAdvertisements() {
     this.setState({
-      advertisements: MyStore.getAll(),
+      //advertisements: MyStore.getAll(),
     });
   }
 
@@ -128,12 +121,12 @@ export default class Login extends React.Component {
         <LoginScreenTitle>{dict.login}</LoginScreenTitle>
         <List form>
           <ListInput
-            label={dict.username}
-            type="tel"
+            label={dict.email}
+            type="text"
             placeholder=''
-            value={this.state.username}
+            value={this.state.email}
             onInput={(e) => {
-              this.setState({ username: e.target.value});
+              this.setState({ email: e.target.value});
             }}
             />
           <ListInput
@@ -173,9 +166,7 @@ export default class Login extends React.Component {
         </List>
 
         <List>
-          <ListItem title={dict.my_advertisements} link="/my_adverts/"></ListItem>
-          <ListItem title={dict.my_pins} link="/my_pins/"></ListItem>
-          <ListItem title={dict.messages} link="/messages/"  badge={this.state.unseens} badgeColor="red"></ListItem>
+          <ListItem title={dict.my_reservations} link="/my_reservations/"  badge={this.state.unseens} badgeColor="red"></ListItem>
         </List>
 
 
@@ -186,7 +177,7 @@ export default class Login extends React.Component {
 
 
   deleteAd(id) {
-    MyActions.deleteAdvertisement(id, this.state.token);
+    //MyActions.deleteAdvertisement(id, this.state.token);
   }
 
   createItem(){
@@ -219,7 +210,7 @@ export default class Login extends React.Component {
 
   getUnseens() {
     this.setState({
-      unseens: MessageStore.getUnseens(),
+      //unseens: MessageStore.getUnseens(),
     });
   }
 
@@ -239,9 +230,8 @@ export default class Login extends React.Component {
         {this.UserContent()}
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>
-          <Link href="/categories/0"><i class="f7-icons">data_fill</i></Link>
-          <Link href="/new_cam_advert/"><i class="f7-icons">add_round_fill</i></Link>
-          <Link href="/"><i class="icon f7-icons">home_fill</i></Link>
+          <Link href="/blogs/"><i class="f7-icons">book</i></Link>
+          <Link href="/"><i class="icon f7-icons">world</i></Link>
           <Link href="/login/">
             <i class="icon f7-icons ios-only">
               person_round

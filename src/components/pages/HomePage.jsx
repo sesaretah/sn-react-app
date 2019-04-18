@@ -25,11 +25,9 @@ import {
 } from 'framework7-react';
 
 import * as MyActions from "../../actions/MyActions";
-import MyStore from "../../stores/MyStore";
-import MessageStore from "../../stores/MessageStore";
-import CategoryStore from "../../stores/CategoryStore";
+import ArticleStore from "../../stores/ArticleStore";
+import UserStore from "../../stores/UserStore";
 import { dict} from '../Dict';
-import AdvertCard from './AdvertCard';
 import logo from  "../../images/logo.png";
 import Moment from 'react-moment';
 import 'moment-timezone';
@@ -41,178 +39,134 @@ export default class HomePage extends React.Component {
 
   constructor() {
     super();
-    this.getAdvertisements = this.getAdvertisements.bind(this);
-    this.getUnseens = this.getUnseens.bind(this);
-    this.getCategory = this.getCategory.bind(this);
+    this.getArticles = this.getArticles.bind(this);
+    this.getRoles = this.getRoles.bind(this);
+    this.changedRole = this.changedRole.bind(this);
+    this.changeRole = this.changeRole.bind(this);
+
     if (window.cordova){
       var uuid = window.device.uuid
     } else {
       var uuid = ''
     }
     this.state = {
-      advertisements: MyStore.getAll(),
+      articles: [],
       token: window.localStorage.getItem('token'),
       unseens: 0,
       query: '',
-      categories: [],
+      roles: [],
       uuid: uuid,
       allowInfinite: true,
       showPreloader: true,
       noResult: false,
+      current_role_id: 0,
       page: 1
     };
   }
 
   componentWillMount() {
-    MyStore.on("change", this.getAdvertisements);
-    MyStore.on("load", this.getAdvertisements);
-    MessageStore.on("unseens", this.getUnseens);
-    CategoryStore.on("show_category", this.getCategory);
+    ArticleStore.on("show_articles", this.getArticles);
+    UserStore.on("got_roles", this.getRoles);
+    UserStore.on("changed_role", this.changedRole);
   }
 
   componentWillUnmount() {
-    MyStore.removeListener("change", this.getAdvertisements);
-    MyStore.removeListener("load", this.getAdvertisements);
-    MessageStore.removeListener("unseens", this.getUnseens);
-    CategoryStore.removeListener("show_category", this.getCategory);
+    UserStore.removeListener("changed_role", this.changedRole);
+    UserStore.removeListener("got_roles", this.getRoles);
+    ArticleStore.removeListener("show_articles", this.getArticles);
+    ArticleStore.removeListener("load", this.getArticles);
   }
 
   componentDidMount(){
-    var categoryId = this.$f7route.query.category_id
-    if (categoryId) {
-      MyActions.getAdvertisements(this.state, categoryId);
-      MyActions.getCategory(categoryId);
-    } else {
-      MyActions.getAdvertisements(this.state, '');
-    }
-
-    MyActions.getAllUnseens(this.state.token);
+    MyActions.getArticles(this.state);
+    MyActions.getRoles(this.state);
     if (window.cordova){
       MyActions.updateFCM(this.state.token, this.state.uuid);
     }
 
   }
 
-  getCategory(){
-    this.setState({
-      categories: CategoryStore.getAll(),
-    });
+
+  getArticles() {
+    var articles = ArticleStore.getAll()
+
+    if (articles.length > 0){
+      var joined = this.state.articles.concat(articles);
+      this.setState({ articles: joined, showPreloader: false,allowInfinite: true })
+    } else {
+      this.setState({ articles: [],showPreloader: false,allowInfinite: false })
+    }
   }
 
-  getAdvertisements() {
-    var advertisements = MyStore.getAll()
-    if (advertisements.length > 0){
-      this.setState({
-        advertisements: advertisements,
-        noResult: false,
-        showPreloader: false
-      });
-    } else {
-      this.setState({
-        advertisements: advertisements,
-        noResult: true,
-        showPreloader: false
-      });
-    }
-
+  getRoles(){
+    var roles = UserStore.getRoles();
+    var current_role_id = UserStore.getCurrentRole();
+    this.setState({ roles: roles, current_role_id: current_role_id })
   }
 
   reloadAdvertisements(event, done) {
     this.setState({page: 1},  function() {
-      MyActions.getAdvertisements(this.state, '');
+      MyActions.getArticles(this.state);
       done();
     });
 
   }
 
   loadMore() {
-    const self = this;
-    if (!self.state.allowInfinite) return;
-    self.setState({ showPreloader: false });
-    self.setState({ page: self.state.page + 1 });
-    MyActions.loadAdvertisements(this.state);
+    if (this.state.allowInfinite){
+      this.setState({ allowInfinite: false });
+      this.setState({ page: this.state.page + 1 });
+      this.setState({ showPreloader: true });
+      MyActions.getArticles(this.state);
+    }
   }
 
   searchads() {
     this.setState({query: this.search.value},  function() {
-      MyActions.searchAdvertisements(this.state);
+      //  MyActions.searchAdvertisements(this.state);
     });
   }
 
-  createCard() {
-    var length = this.state.advertisements.length;
-    var rows =  Math.floor(length/2);
-    var remainder = length % 2;
-    let item = []
-
-    for (let i = 0; i < rows + 1; i++) {
-      let children = []
-      if ( i != rows){
-        for (let j = 0; j < 2; j++) {
-          var obj = this.state.advertisements[i*2+j]
-          children.push(<Col width="50" className="col-center">{<AdvertCard obj={obj}></AdvertCard>}</Col>)
-        }
-      } else{
-        for (let j = 0; j < remainder; j++) {
-          var obj = this.state.advertisements[i*2+j]
-          children.push(<Col width="50" className="col-center">{<AdvertCard obj={obj}></AdvertCard>}</Col>)
-        }
-      }
-      item.push(<Row noGap>{children}</Row>)
-    }
-    return item
-  }
-
   createItem(){
-    var length = this.state.advertisements.length;
+    var length = this.state.articles.length;
     let items = []
     for (let i = 0; i < length; i++) {
       items.push(<ListItem
-        link={'/adverts/' + this.state.advertisements[i].id}
-        title={this.state.advertisements[i].title}
+        link={'/articles/' + this.state.articles[i].id}
+        title={this.state.articles[i].title}
         after=""
         subtitle=""
-        text={this.state.advertisements[i].content}
+        text={this.state.articles[i].abstract}
         >
-        <img slot="media" src={this.state.advertisements[i].cover} width="80" />
-        <span class="price text-muted"><Moment fromNow ago>{this.state.advertisements[i].updated_at}</Moment> {dict.ago}</span>
+        <span class="price text-muted nowrp light-blue">{this.state.articles[i].workflow} > {this.state.articles[i].workflow_state}</span>
       </ListItem>);
     }
     return items
   }
 
-  getUnseens() {
-    this.setState({
-      unseens: MessageStore.getUnseens(),
-    });
-  }
-
-  category(){
-    if (this.state.categories && this.state.categories[0]){
-      return(<div>
-        <Link onClick={() => this.$f7router.navigate('/categories/' + this.state.categories[0].parent_id)}>
-          <i class="f7-icons">chevron_right</i>
-          <div class='custom-category'>{dict.back}</div>
-      </Link>
-        <div class='custom-category'>{dict.category}: {this.state.categories[0].title}</div>
-      </div>);
+  roles(){
+    var length = this.state.roles.length;
+    let items = []
+    for (let i = 0; i < length; i++) {
+      items.push(<option value={this.state.roles[i].id} >{this.state.roles[i].title}</option>);
     }
+    return items
   }
 
-  blankResult() {
-    if (this.state.noResult){
-      return(<Block strong>{dict.no_result}</Block>);
-    }
+  changeRole(e){
+    this.setState({current_role_id: e.target.value}, function () {
+    MyActions.changeRole(this.state);
+  });
   }
 
-
+  changedRole(){
+    var current_role_id = UserStore.getCurrentRole();
+    this.setState({current_role_id: current_role_id, articles: []}, function () {
+      MyActions.getArticles(this.state);
+  });
+  }
 
   render() {
-    const { advertisements } = this.state;
-
-    const AdvertisementsComponents = function () {
-      return this.createCard();
-    };
 
     return(
       <Page colorTheme="blue" className="gray" ptr onPtrRefresh={this.reloadAdvertisements.bind(this)}
@@ -222,36 +176,22 @@ export default class HomePage extends React.Component {
         onInfinite={this.loadMore.bind(this)}
         >
         <Navbar>
-          <form class="searchbar">
-            <div class="searchbar-inner">
-              <div class="searchbar-input-wrap">
-                <input type="search"
-                  placeholder={dict.search}
-                  ref={input => this.search = input}
-                  onKeyUp={this.searchads.bind(this)}
-                  />
-                <i class="searchbar-icon"></i>
-                <span class="input-clear-button"></span>
-              </div>
-              <span class="searchbar-disable-button"></span>
-            </div>
-          </form>
           <NavTitle>
             <img src={logo} alt="Logo" className="logo" />
           </NavTitle>
         </Navbar>
+
         <Block>
-          {this.category()}
+
         </Block>
-        {this.blankResult()}
+
         <List mediaList>
           {this.createItem()}
         </List>
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>
-          <Link href="/categories/0"><i class="f7-icons">data_fill</i></Link>
-          <Link href="/new_cam_advert/"><i class="f7-icons">add_round_fill</i></Link>
-          <Link href="/"><i class="icon f7-icons">home_fill</i></Link>
+          <Link href="/"><i class="f7-icons">book</i></Link>
+          <Link href="/"><i class="icon f7-icons">world</i></Link>
           <Link href="/login/">
             <i class="icon f7-icons ios-only">
               person_round

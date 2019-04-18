@@ -26,7 +26,6 @@ import {
 
 import * as MyActions from "../../actions/MyActions";
 import UserStore from "../../stores/UserStore";
-import MyStore from "../../stores/MyStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
 
@@ -35,15 +34,13 @@ export default class SignUp extends React.Component {
     super(props);
     this.logged_in = this.logged_in.bind(this);
     this.sign_up_fail = this.sign_up_fail.bind(this);
-    this.getProvinces = this.getProvinces.bind(this);
     this.change = this.change.bind(this);
 
     this.state = {
-      username: '',
+      email: '',
       password: '',
       password_confirmation: '',
       name: '',
-      provinces: [],
       province_id: 'b10feba7-367b-43b5-a31e-47aa5a4a8d13'
     };
   }
@@ -52,17 +49,15 @@ export default class SignUp extends React.Component {
   componentWillMount() {
     UserStore.on("logged_in", this.logged_in);
     UserStore.on("sign_up_fail", this.sign_up_fail);
-    MyStore.on("show_provinces", this.getProvinces);
-  }
+      }
 
   componentWillUnmount() {
     UserStore.removeListener("logged_in", this.logged_in);
     UserStore.removeListener("sign_up_fail", this.sign_up_fail);
-    MyStore.removeListener("show_provinces", this.getProvinces);
   }
 
   componentDidMount(){
-    MyActions.getProvinces();
+
   }
 
   logged_in() {
@@ -100,8 +95,8 @@ export default class SignUp extends React.Component {
   }
 
   getProvinces(){
-    var provinces = MyStore.getProvinces();
-    this.setState({provinces: provinces});
+    //var provinces = MyStore.getProvinces();
+    //this.setState({provinces: provinces});
   }
 
   provinceItems(){
@@ -132,12 +127,12 @@ export default class SignUp extends React.Component {
         <LoginScreenTitle>{dict.sign_up}</LoginScreenTitle>
         <List form>
           <ListInput
-            label={dict.username}
-            type="tel"
+            label={dict.email}
+            type="text"
             placeholder=""
-            value={this.state.username}
+            value={this.state.email}
             onInput={(e) => {
-              this.setState({ username: e.target.value});
+              this.setState({ email: e.target.value});
             }}
             />
           <ListInput
@@ -149,14 +144,6 @@ export default class SignUp extends React.Component {
               this.setState({ name: e.target.value});
             }}
             />
-          <li class="">
-            <span className="custom-label ">{dict.province}</span>
-          </li>
-          <ListItem>
-            <select name="province_id" value={this.state.province_id} onChange={this.change} className='custom-select'>
-              {this.provinceItems()}
-            </select>
-          </ListItem>
           <ListInput
             label={dict.password}
             type="password"
