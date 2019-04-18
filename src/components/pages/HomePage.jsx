@@ -25,7 +25,7 @@ import {
 } from 'framework7-react';
 
 import * as MyActions from "../../actions/MyActions";
-import ArticleStore from "../../stores/ArticleStore";
+import ShareStore from "../../stores/ShareStore";
 import UserStore from "../../stores/UserStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
@@ -39,7 +39,7 @@ export default class HomePage extends React.Component {
 
   constructor() {
     super();
-    this.getArticles = this.getArticles.bind(this);
+    this.getShares = this.getShares.bind(this);
     this.getRoles = this.getRoles.bind(this);
     this.changedRole = this.changedRole.bind(this);
     this.changeRole = this.changeRole.bind(this);
@@ -50,7 +50,7 @@ export default class HomePage extends React.Component {
       var uuid = ''
     }
     this.state = {
-      articles: [],
+      shares: [],
       token: window.localStorage.getItem('token'),
       unseens: 0,
       query: '',
@@ -65,7 +65,7 @@ export default class HomePage extends React.Component {
   }
 
   componentWillMount() {
-    ArticleStore.on("show_articles", this.getArticles);
+    ShareStore.on("show_shares", this.getShares);
     UserStore.on("got_roles", this.getRoles);
     UserStore.on("changed_role", this.changedRole);
   }
@@ -73,12 +73,12 @@ export default class HomePage extends React.Component {
   componentWillUnmount() {
     UserStore.removeListener("changed_role", this.changedRole);
     UserStore.removeListener("got_roles", this.getRoles);
-    ArticleStore.removeListener("show_articles", this.getArticles);
-    ArticleStore.removeListener("load", this.getArticles);
+    ShareStore.removeListener("show_shares", this.getShares);
+    ShareStore.removeListener("load", this.getShares);
   }
 
   componentDidMount(){
-    MyActions.getArticles(this.state);
+    MyActions.getShares(this.state);
     MyActions.getRoles(this.state);
     if (window.cordova){
       MyActions.updateFCM(this.state.token, this.state.uuid);
@@ -87,14 +87,14 @@ export default class HomePage extends React.Component {
   }
 
 
-  getArticles() {
-    var articles = ArticleStore.getAll()
+  getShares() {
+    var shares = ShareStore.getAll()
 
-    if (articles.length > 0){
-      var joined = this.state.articles.concat(articles);
-      this.setState({ articles: joined, showPreloader: false,allowInfinite: true })
+    if (shares.length > 0){
+      var joined = this.state.shares.concat(shares);
+      this.setState({ shares: joined, showPreloader: false,allowInfinite: true })
     } else {
-      this.setState({ articles: [],showPreloader: false,allowInfinite: false })
+      this.setState({showPreloader: false,allowInfinite: false })
     }
   }
 
@@ -106,18 +106,20 @@ export default class HomePage extends React.Component {
 
   reloadAdvertisements(event, done) {
     this.setState({page: 1},  function() {
-      MyActions.getArticles(this.state);
+      MyActions.getShares(this.state);
       done();
     });
 
   }
 
   loadMore() {
+
+    console.log('loadMore', this.state.page, this.state.allowInfinite );
     if (this.state.allowInfinite){
       this.setState({ allowInfinite: false });
       this.setState({ page: this.state.page + 1 });
       this.setState({ showPreloader: true });
-      MyActions.getArticles(this.state);
+      MyActions.getShares(this.state);
     }
   }
 
@@ -128,21 +130,25 @@ export default class HomePage extends React.Component {
   }
 
   createItem(){
-    var length = this.state.articles.length;
+    var length = this.state.shares.length;
     let items = []
     for (let i = 0; i < length; i++) {
       items.push(<ListItem
-        link={'/articles/' + this.state.articles[i].id}
-        title={this.state.articles[i].title}
+        link={'/shares/' + this.state.shares[i].id}
+        title={this.state.shares[i].title}
         after=""
         subtitle=""
-        text={this.state.articles[i].abstract}
+
+        text={this.state.shares[i].abstract}
         >
-        <span class="price text-muted nowrp light-blue">{this.state.articles[i].workflow} > {this.state.articles[i].workflow_state}</span>
+        <img slot="media" src={this.state.shares[i].cover} width="80" />
+        <span class="price text-muted nowrp light-blue">{this.state.shares[i].workflow} > {this.state.shares[i].workflow_state}</span>
       </ListItem>);
     }
     return items
   }
+
+
 
   roles(){
     var length = this.state.roles.length;
@@ -161,8 +167,8 @@ export default class HomePage extends React.Component {
 
   changedRole(){
     var current_role_id = UserStore.getCurrentRole();
-    this.setState({current_role_id: current_role_id, articles: []}, function () {
-      MyActions.getArticles(this.state);
+    this.setState({current_role_id: current_role_id, shares: []}, function () {
+      MyActions.getShares(this.state);
   });
   }
 
@@ -176,6 +182,9 @@ export default class HomePage extends React.Component {
         onInfinite={this.loadMore.bind(this)}
         >
         <Navbar>
+          <Link href='/'>
+            <div class='custom-category teal-text'>{dict.shoa}</div>
+          </Link>
           <NavTitle>
             <img src={logo} alt="Logo" className="logo" />
           </NavTitle>

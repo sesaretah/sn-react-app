@@ -2,8 +2,8 @@ import HomePage from './components/pages/HomePage';
 import NotFoundPage from './components/pages/NotFoundPage';
 import Login from './components/pages/Login';
 import SignUp from './components/pages/SignUp';
-import Article from './components/pages/Article';
-import ViewArticle from './components/pages/ViewArticle';
+import Share from './components/pages/Share';
+import ViewShare from './components/pages/ViewShare';
 
 export default [
   {
@@ -20,11 +20,11 @@ export default [
   },
   {
     path: '/articles/',
-    component: Article,
+    component: Share,
   },
   {
-    path: '/articles/:articleId',
-    component: ViewArticle,
+    path: '/shares/:shareId',
+    component: ViewShare,
   },
   {
     path: '(.*)',

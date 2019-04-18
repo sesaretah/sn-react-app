@@ -13,7 +13,7 @@ export const dict = {
   'signed_up_already': 'تا کنون ثبت نام نکرده اید؟',
   'new_advert': 'درج آگهی ',
   'title': 'عنوان',
-  'content': 'متن کامل ',
+  'content': 'متن ',
   'submit': 'ثبت ',
   'upload_from_camera' : 'عکس با دوربین',
   'upload_from_gallery': 'انتخاب از گالری',

@@ -366,6 +366,10 @@ min-height: 30px !important;
   color: #3168c1;
 }
 
+.teal-text {
+  color: #3DB39E !important;
+}
+
 .bg-blue-lightest {
     background-color: #3DB39E !important;
     color: #3DB39E !important;

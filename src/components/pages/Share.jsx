@@ -25,7 +25,7 @@ import {
 } from 'framework7-react';
 
 import * as MyActions from "../../actions/MyActions";
-import ArticleStore from "../../stores/ArticleStore";
+import ShareStore from "../../stores/ShareStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
 import Moment from 'react-moment';
@@ -38,14 +38,14 @@ export default class HomePage extends React.Component {
 
   constructor() {
     super();
-    this.getArticles = this.getArticles.bind(this);
+    this.getShares = this.getShares.bind(this);
     if (window.cordova){
       var uuid = window.device.uuid
     } else {
       var uuid = ''
     }
     this.state = {
-      articles: '',
+      shares: '',
       token: window.localStorage.getItem('token'),
       unseens: 0,
       query: '',
@@ -59,31 +59,31 @@ export default class HomePage extends React.Component {
   }
 
   componentWillMount() {
-    ArticleStore.on("show_articles", this.getArticles);
-    ArticleStore.on("load", this.getArticles);
+    ShareStore.on("show_shares", this.getShares);
+    ShareStore.on("load", this.getShares);
   }
 
   componentWillUnmount() {
-    ArticleStore.removeListener("show_articles", this.getArticles);
-    ArticleStore.removeListener("load", this.getArticles);
+    ShareStore.removeListener("show_shares", this.getShares);
+    ShareStore.removeListener("load", this.getShares);
   }
 
   componentDidMount(){
-    MyActions.getArticles(this.state);
+    MyActions.getShares(this.state);
   }
 
 
-  getArticles() {
-    var articles = ArticleStore.getAll()
-    if (articles.length > 0){
+  getShares() {
+    var shares = ShareStore.getAll()
+    if (shares.length > 0){
       this.setState({
-        articles: articles,
+        shares: shares,
         noResult: false,
         showPreloader: false
       });
     } else {
       this.setState({
-        articles: articles,
+        shares: shares,
         noResult: true,
         showPreloader: false
       });
@@ -93,17 +93,17 @@ export default class HomePage extends React.Component {
 
 
   createItem(){
-    var length = this.state.articles.length;
+    var length = this.state.shares.length;
     let items = []
     for (let i = 0; i < length; i++) {
       items.push(<ListItem
-        link={'/articles/' + this.state.articles[i].id}
-        title={this.state.articles[i].title}
+        link={'/shares/' + this.state.shares[i].id}
+        title={this.state.shares[i].title}
         after=""
         subtitle=""
-        text={this.state.articles[i].abstract}
+        text={this.state.shares[i].abstract}
         >
-        <span class="price text-muted nowrp">{this.state.articles[i].workflow} > {this.state.articles[i].workflow_state}</span>
+        <span class="price text-muted nowrp">{this.state.shares[i].workflow} > {this.state.shares[i].workflow_state}</span>
       </ListItem>);
     }
     return items
@@ -136,7 +136,7 @@ export default class HomePage extends React.Component {
         </List>
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>
-          <Link href="/articles/"><i class="f7-icons">book</i></Link>
+          <Link href="/shares/"><i class="f7-icons">book</i></Link>
           <Link href="/"><i class="icon f7-icons">world</i></Link>
           <Link href="/login/">
             <i class="icon f7-icons ios-only">

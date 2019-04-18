@@ -41,7 +41,7 @@ export default class Login extends React.Component {
       advertisements: [],
       token: window.localStorage.getItem('token'),
       unseens: 0,
-      email: '',
+      username: '',
       password: '',
     };
   }
@@ -118,15 +118,15 @@ export default class Login extends React.Component {
   LoginContent() {
     return (
       <React.Fragment>
-        <LoginScreenTitle>{dict.login}</LoginScreenTitle>
+
         <List form>
           <ListInput
-            label={dict.email}
+            label={dict.mobile}
             type="text"
             placeholder=''
-            value={this.state.email}
+            value={this.state.username}
             onInput={(e) => {
-              this.setState({ email: e.target.value});
+              this.setState({ username: e.target.value});
             }}
             />
           <ListInput

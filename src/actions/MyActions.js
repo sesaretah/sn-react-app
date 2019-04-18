@@ -1,7 +1,7 @@
 import dispatcher from "../dispatcher";
 import axios from 'axios';
-//const server='http://localhost:3000/api';
-const server='http://194.225.14.164/api';
+const server='http://localhost:3000/api/v2';
+//const server='http://194.225.14.164/api';
 //const server='http://sanatik.ir:3000/api';
 
 export function updateFCM(token, uuid) {
@@ -26,9 +26,9 @@ export function updateFCM(token, uuid) {
 
 
 export function login(data) {
-  var email = data.email
+  var username = data.username
   var password = data.password
-  axios.get(server + '/login?email='+ email +'&password='+ password)
+  axios.get(server + '/login?username='+ username +'&password='+ password)
   .then(function (response) {
     console.log(response);
     if (response.data.result == 'ERROR'){
@@ -73,12 +73,12 @@ export function sign_up(data) {
   });
 }
 
-export function getArticles(data) {
-  axios.get(server + '/dashboard?page='+data.page,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + data.token }})
+export function getShares(data) {
+  axios.get(server + '/wall?page='+data.page,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + data.token }})
   .then(function (response) {
     console.log(response);
     dispatcher.dispatch({
-      type: "SHOW_ARTICLES",
+      type: "SHOW_SHARES",
       data: response.data,
     });
   })
@@ -113,13 +113,13 @@ export function changeRole(data) {
   });
 }
 
-export function getArticle(id, token) {
-  axios.get(server + '/article/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+export function getShare(id, token) {
+  axios.get(server + '/view_share/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
   .then(function (response) {
     console.log(response);
     dispatcher.dispatch({
-      type: "SHOW_ARTICLE",
-      article: response.data,
+      type: "SHOW_SHARE",
+      data: response.data,
     });
   })
   .catch(function (error) {
