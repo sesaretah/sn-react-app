@@ -5,6 +5,7 @@ import SignUp from './components/pages/SignUp';
 import Stream from './components/pages/Stream';
 import ViewShare from './components/pages/ViewShare';
 import ViewStream from './components/pages/ViewStream';
+import ViewDiscussion from './components/pages/ViewDiscussion';
 
 export default [
   {
@@ -30,6 +31,10 @@ export default [
   {
     path: '/streams/:streamId',
     component: ViewStream,
+  },
+  {
+    path: '/discussions/:discussionId',
+    component: ViewDiscussion,
   },
   {
     path: '(.*)',

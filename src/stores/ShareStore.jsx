@@ -6,7 +6,7 @@ class ShareStore extends EventEmitter {
   constructor() {
     super()
     this.shares = [];
-
+    this.discussions = [];
   }
 
   showShares(data){
@@ -20,6 +20,10 @@ class ShareStore extends EventEmitter {
 
   showShare(data){
     this.shares = [];
+    this.discussions = [];
+    for (var i = 0, len = data.discussions.length; i < len; ++i) {
+      this.discussions.push(data.discussions[i]);
+    }
     this.shares.push(data.share);
     this.emit("show_share");
   }
@@ -28,6 +32,10 @@ class ShareStore extends EventEmitter {
 
   getAll() {
     return this.shares
+  }
+
+  getDiscussions() {
+    return this.discussions
   }
 
   handleActions(action) {

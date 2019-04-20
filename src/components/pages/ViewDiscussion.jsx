@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Page, Navbar, Block, Link, Toolbar, Swiper, SwiperSlide, NavTitle, BlockTitle, List, ListItem, Segmented, Button, ListButton} from 'framework7-react';
 
 import * as MyActions from "../../actions/MyActions";
-import ShareStore from "../../stores/ShareStore";
+import DiscussionStore from "../../stores/DiscussionStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
 import Moment from 'react-moment';
@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 export default class Tour extends Component {
   constructor() {
     super();
-    this.getShare = this.getShare.bind(this);
+    this.getDiscussion = this.getDiscussion.bind(this);
     if (window.cordova){
       var uuid = window.device.uuid
     } else {
@@ -21,95 +21,69 @@ export default class Tour extends Component {
     }
     this.state = {
       token: window.localStorage.getItem('token'),
-      shares: [],
-      discussions: []
+      discussions: [],
+      comments: []
     };
   }
 
 
   componentWillMount() {
-    ShareStore.on("show_share", this.getShare);
+    DiscussionStore.on("show_discussion", this.getDiscussion);
   }
 
   componentWillUnmount() {
-    ShareStore.removeListener("show_share", this.getShare);
+    DiscussionStore.removeListener("show_discussion", this.getDiscussion);
   }
 
 
 
   componentDidMount(){
-    MyActions.getShare(this.$f7route.params['shareId'], this.state.token);
+    MyActions.getDiscussion(this.$f7route.params['discussionId'], this.state.token);
   }
 
 
-  getShare() {
-    var shares = ShareStore.getAll();
-    var discussions = ShareStore.getDiscussions();
+  getDiscussion() {
+    var discussions = DiscussionStore.getAll();
+    var comments = DiscussionStore.getComments();
     console.log(discussions);
     this.setState({
-      shares: shares[0],
-      discussions: discussions
+      discussions: discussions[0],
+      comments: comments
     });
   }
 
-  shareWorkflow(){
-    if (this.state.shares) {
-      return(
-        <React.Fragment>
-          <div class="block-title">{dict.workflow}</div>
-          <Block strong>{this.state.shares.workflow} > {this.state.shares.workflow_state}</Block>
-        </React.Fragment>
-      )
-    }
-  }
 
-  shareTitle(){
-    if (this.state.shares) {
+  discussionTitle(){
+    if (this.state.discussions) {
       return(
         <React.Fragment>
           <div class="block-title">{dict.title}</div>
-          <Block strong>{this.state.shares.title}</Block>
+          <Block strong>{this.state.discussions.title}</Block>
         </React.Fragment>
       )
     }
   }
-
-  shareContent(){
-    if (this.state.shares) {
-      return(
-        <React.Fragment>
-          <div class="block-title">{dict.content}</div>
-          <Block strong>
-            <div dangerouslySetInnerHTML={{__html: this.state.shares.content}}></div>
-          </Block>
-        </React.Fragment>
-      )
-    }
-  }
-
 
 
   createItem(){
-    console.log(this.state.discussions[1]);
-    if (this.state.discussions) {
-      var length = this.state.discussions.length;
+    console.log(this.state.comments[1]);
+    if (this.state.comments) {
+      var length = this.state.comments.length;
       let items = []
       for (let i = 0; i < length; i++) {
         items.push(<ListItem
-          link={'/discussions/' + this.state.discussions[i].id}
-          title={this.state.discussions[i].title}
+          title={this.state.comments[i].title}
           after=""
           subtitle=""
-
-          text={this.state.discussions[i].content}
+          text={this.state.comments[i].content}
           >
-          <img slot="media" src={this.state.discussions[i].cover} width="80" />
-          <span class="price text-muted nowrp light-blue">{this.state.discussions[i].workflow} > {this.state.discussions[i].workflow_state}</span>
-        </ListItem>);
+          <img slot="media" src={this.state.comments[i].cover} width="80" />
+          </ListItem>);
       }
       return items
     }
   }
+
 
 
   render() {
@@ -125,13 +99,15 @@ export default class Tour extends Component {
           </NavTitle>
         </Navbar>
 
-        {this.shareTitle()}
-        {this.shareContent()}
+        {this.discussionTitle()}
 
 
-        <List mediaList>
-          {this.createItem()}
-        </List>
+
+                <List mediaList>
+                  {this.createItem()}
+                </List>
+
+
 
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>

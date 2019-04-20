@@ -154,3 +154,17 @@ export function getStream(id, token) {
     console.log(error);
   });
 }
+
+export function getDiscussion(id, token) {
+  axios.get(server + '/view_discussion/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    console.log(response);
+    dispatcher.dispatch({
+      type: "SHOW_DISCUSSION",
+      data: response.data,
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
