@@ -2,8 +2,9 @@ import HomePage from './components/pages/HomePage';
 import NotFoundPage from './components/pages/NotFoundPage';
 import Login from './components/pages/Login';
 import SignUp from './components/pages/SignUp';
-import Share from './components/pages/Share';
+import Stream from './components/pages/Stream';
 import ViewShare from './components/pages/ViewShare';
+import ViewStream from './components/pages/ViewStream';
 
 export default [
   {
@@ -19,12 +20,16 @@ export default [
     component: SignUp,
   },
   {
-    path: '/articles/',
-    component: Share,
+    path: '/streams/',
+    component: Stream,
   },
   {
     path: '/shares/:shareId',
     component: ViewShare,
+  },
+  {
+    path: '/streams/:streamId',
+    component: ViewStream,
   },
   {
     path: '(.*)',

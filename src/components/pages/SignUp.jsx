@@ -28,6 +28,7 @@ import * as MyActions from "../../actions/MyActions";
 import UserStore from "../../stores/UserStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default class SignUp extends React.Component {
   constructor(props) {
@@ -174,9 +175,8 @@ export default class SignUp extends React.Component {
         </List>
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>
-          <Link href="/categories/0"><i class="f7-icons">data_fill</i></Link>
-          <Link href="/new_cam_advert/"><i class="f7-icons">add_round_fill</i></Link>
-          <Link href="/"><i class="icon f7-icons">home_fill</i></Link>
+          <Link href="/streams/"><FontAwesomeIcon icon="water" size="lg" color="#3DB39E"/></Link>
+          <Link href="/"><i class="icon f7-icons">world</i></Link>
           <Link href="/login/">
             <i class="icon f7-icons ios-only">
               person_round

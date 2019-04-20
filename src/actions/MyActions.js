@@ -87,6 +87,20 @@ export function getShares(data) {
   });
 }
 
+export function getStreams(data) {
+  axios.get(server + '/streams?page='+data.page,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + data.token }})
+  .then(function (response) {
+    console.log(response);
+    dispatcher.dispatch({
+      type: "SHOW_STREAMS",
+      data: response.data,
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
 export function getRoles(data) {
   axios.get(server + '/roles',  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + data.token }})
   .then(function (response) {
@@ -119,6 +133,20 @@ export function getShare(id, token) {
     console.log(response);
     dispatcher.dispatch({
       type: "SHOW_SHARE",
+      data: response.data,
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+export function getStream(id, token) {
+  axios.get(server + '/view_stream/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    console.log(response);
+    dispatcher.dispatch({
+      type: "SHOW_STREAM",
       data: response.data,
     });
   })

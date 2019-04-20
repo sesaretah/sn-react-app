@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Page, Navbar, Block, Link, Toolbar, Swiper, SwiperSlide, NavTitle, BlockTitle, List, ListItem, Segmented, Button, ListButton} from 'framework7-react';
 
 import * as MyActions from "../../actions/MyActions";
-import ShareStore from "../../stores/ShareStore";
+import StreamStore from "../../stores/StreamStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
 import Moment from 'react-moment';
@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 export default class Tour extends Component {
   constructor() {
     super();
-    this.getShare = this.getShare.bind(this);
+    this.getStream = this.getStream.bind(this);
     if (window.cordova){
       var uuid = window.device.uuid
     } else {
@@ -21,114 +21,90 @@ export default class Tour extends Component {
     }
     this.state = {
       token: window.localStorage.getItem('token'),
+      streams: [],
       shares: [],
     };
   }
 
 
   componentWillMount() {
-    ShareStore.on("show_share", this.getShare);
+    StreamStore.on("show_stream", this.getStream);
   }
 
   componentWillUnmount() {
-    ShareStore.removeListener("show_share", this.getShare);
+    StreamStore.removeListener("show_stream", this.getStream);
   }
 
 
 
   componentDidMount(){
-    MyActions.getShare(this.$f7route.params['shareId'], this.state.token);
+    MyActions.getStream(this.$f7route.params['streamId'], this.state.token);
   }
 
 
-  getShare() {
-    var shares = ShareStore.getAll();
-    console.log(shares);
+  getStream() {
+    var streams = StreamStore.getAll();
+    var shares = StreamStore.getShares();
     this.setState({
-      shares: shares[0]
+      streams: streams[0],
+      shares: shares
     });
   }
 
-  shareWorkflow(){
-    if (this.state.shares) {
-      return(
-        <React.Fragment>
-          <div class="block-title">{dict.workflow}</div>
-          <Block strong>{this.state.shares.workflow} > {this.state.shares.workflow_state}</Block>
-        </React.Fragment>
-      )
-    }
-  }
 
-  shareTitle(){
-    if (this.state.shares) {
+  streamTitle(){
+    if (this.state.streams) {
       return(
         <React.Fragment>
           <div class="block-title">{dict.title}</div>
-          <Block strong>{this.state.shares.title}</Block>
+          <Block strong>{this.state.streams.title}</Block>
         </React.Fragment>
       )
     }
   }
 
-  shareContent(){
-    if (this.state.shares) {
+  streamContent(){
+    if (this.state.streams) {
       return(
         <React.Fragment>
           <div class="block-title">{dict.content}</div>
           <Block strong>
-            <div dangerouslySetInnerHTML={{__html: this.state.shares.content}}></div>
+            <div dangerouslySetInnerHTML={{__html: this.state.streams.content}}></div>
           </Block>
         </React.Fragment>
       )
     }
   }
 
-
-
-
-
-  uploadItems(upload){
-    console.log(upload);
+  createItem(){
+    console.log(this.state.shares[1]);
+      if (this.state.shares) {
+    var length = this.state.shares.length;
     let items = []
-    for (var item in upload.items) {
-      var title = "لینک"
-      if (upload.items[item].title) {
-        title = upload.items[item].title
-      }
-      items.push(<ListButton title={title} link={upload.items[item].url} external></ListButton>)
+    for (let i = 0; i < length; i++) {
+      items.push(<ListItem
+        link={'/shares/' + this.state.shares[i].id}
+        title={this.state.shares[i].title}
+        after=""
+        subtitle=""
+
+        text={this.state.shares[i].content}
+        >
+        <img slot="media" src={this.state.shares[i].cover} width="80" />
+        <span class="price text-muted nowrp light-blue">{this.state.shares[i].workflow} > {this.state.shares[i].workflow_state}</span>
+      </ListItem>);
     }
     return items
   }
-
-  shareUploads(){
-    if (this.state.shares) {
-      var uploads = this.state.shares.uploads
-      var items = []
-      for (var u in uploads) {
-        items.push(
-          <React.Fragment>
-            <BlockTitle>{this.state.shares.uploads[u].title}</BlockTitle>
-            <List>{this.uploadItems(this.state.shares.uploads[u])}</List>
-          </React.Fragment>
-        )
-      }
-      return(
-        <React.Fragment>
-          <div class="block-title">{dict.uploads}</div>
-          <Block strong>
-            {items}
-          </Block>
-        </React.Fragment>
-      )
-    }
   }
 
-  render() {
+
+
+render() {
     return (
       <Page colorTheme="blue" className="gray">
         <Navbar>
-          <Link onClick={() => this.$f7router.back()}>
+          <Link href='/streams/'>
             <i class="f7-icons color-white">chevron_right</i>
             <div class='custom-category teal-text'>{dict.back}</div>
           </Link>
@@ -137,8 +113,12 @@ export default class Tour extends Component {
           </NavTitle>
         </Navbar>
 
-        {this.shareTitle()}
-        {this.shareContent()}
+        {this.streamTitle()}
+        {this.streamContent()}
+
+        <List mediaList>
+          {this.createItem()}
+        </List>
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>
           <Link href="/streams/"><FontAwesomeIcon icon="water" size="lg" color="#3DB39E"/></Link>

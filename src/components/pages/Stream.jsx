@@ -25,7 +25,7 @@ import {
 } from 'framework7-react';
 
 import * as MyActions from "../../actions/MyActions";
-import ShareStore from "../../stores/ShareStore";
+import StreamStore from "../../stores/StreamStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
 import Moment from 'react-moment';
@@ -38,14 +38,14 @@ export default class HomePage extends React.Component {
 
   constructor() {
     super();
-    this.getShares = this.getShares.bind(this);
+    this.getStreams = this.getStreams.bind(this);
     if (window.cordova){
       var uuid = window.device.uuid
     } else {
       var uuid = ''
     }
     this.state = {
-      shares: '',
+      streams: '',
       token: window.localStorage.getItem('token'),
       unseens: 0,
       query: '',
@@ -59,31 +59,31 @@ export default class HomePage extends React.Component {
   }
 
   componentWillMount() {
-    ShareStore.on("show_shares", this.getShares);
-    ShareStore.on("load", this.getShares);
+    StreamStore.on("show_streams", this.getStreams);
+    StreamStore.on("load", this.getStreams);
   }
 
   componentWillUnmount() {
-    ShareStore.removeListener("show_shares", this.getShares);
-    ShareStore.removeListener("load", this.getShares);
+    StreamStore.removeListener("show_streams", this.getStreams);
+    StreamStore.removeListener("load", this.getStreams);
   }
 
   componentDidMount(){
-    MyActions.getShares(this.state);
+    MyActions.getStreams(this.state);
   }
 
 
-  getShares() {
-    var shares = ShareStore.getAll()
-    if (shares.length > 0){
+  getStreams() {
+    var streams = StreamStore.getAll()
+    if (streams.length > 0){
       this.setState({
-        shares: shares,
+        streams: streams,
         noResult: false,
         showPreloader: false
       });
     } else {
       this.setState({
-        shares: shares,
+        streams: streams,
         noResult: true,
         showPreloader: false
       });
@@ -92,22 +92,25 @@ export default class HomePage extends React.Component {
   }
 
 
-  createItem(){
-    var length = this.state.shares.length;
-    let items = []
-    for (let i = 0; i < length; i++) {
-      items.push(<ListItem
-        link={'/shares/' + this.state.shares[i].id}
-        title={this.state.shares[i].title}
-        after=""
-        subtitle=""
-        text={this.state.shares[i].abstract}
-        >
-        <span class="price text-muted nowrp">{this.state.shares[i].workflow} > {this.state.shares[i].workflow_state}</span>
-      </ListItem>);
+
+    createItem(){
+      var length = this.state.streams.length;
+      let items = []
+      for (let i = 0; i < length; i++) {
+        items.push(<ListItem
+          link={'/streams/' + this.state.streams[i].id}
+          title={this.state.streams[i].title}
+          after=""
+          subtitle=""
+
+          text={this.state.streams[i].content}
+          >
+          <img slot="media" src={this.state.streams[i].cover} width="80" />
+          <span class="price text-muted nowrp light-blue">{this.state.streams[i].workflow} > {this.state.streams[i].workflow_state}</span>
+        </ListItem>);
+      }
+      return items
     }
-    return items
-  }
 
   getUnseens() {
     this.setState({
@@ -126,6 +129,9 @@ export default class HomePage extends React.Component {
     return(
       <Page colorTheme="blue" className="gray" >
         <Navbar>
+          <Link href='/'>
+            <div class='custom-category teal-text'>{dict.shoa}</div>
+          </Link>
           <NavTitle>
             <img src={logo} alt="Logo" className="logo" />
           </NavTitle>
@@ -136,7 +142,7 @@ export default class HomePage extends React.Component {
         </List>
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>
-          <Link href="/shares/"><i class="f7-icons">book</i></Link>
+          <Link href="/streams/"><FontAwesomeIcon icon="water" size="lg" color="#3DB39E"/></Link>
           <Link href="/"><i class="icon f7-icons">world</i></Link>
           <Link href="/login/">
             <i class="icon f7-icons ios-only">

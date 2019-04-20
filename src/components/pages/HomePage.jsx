@@ -139,7 +139,7 @@ export default class HomePage extends React.Component {
         after=""
         subtitle=""
 
-        text={this.state.shares[i].abstract}
+        text={this.state.shares[i].content}
         >
         <img slot="media" src={this.state.shares[i].cover} width="80" />
         <span class="price text-muted nowrp light-blue">{this.state.shares[i].workflow} > {this.state.shares[i].workflow_state}</span>
@@ -199,7 +199,7 @@ export default class HomePage extends React.Component {
         </List>
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>
-          <Link href="/"><i class="f7-icons">book</i></Link>
+          <Link href="/streams/"><FontAwesomeIcon icon="water" size="lg" color="#3DB39E"/></Link>
           <Link href="/"><i class="icon f7-icons">world</i></Link>
           <Link href="/login/">
             <i class="icon f7-icons ios-only">

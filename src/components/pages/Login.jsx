@@ -29,6 +29,7 @@ import * as MyActions from "../../actions/MyActions";
 import UserStore from "../../stores/UserStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -230,7 +231,7 @@ export default class Login extends React.Component {
         {this.UserContent()}
 
         <Toolbar tabbar labels color="blue" bottomMd={true}>
-          <Link href="/blogs/"><i class="f7-icons">book</i></Link>
+          <Link href="/streams/"><FontAwesomeIcon icon="water" size="lg" color="#3DB39E"/></Link>
           <Link href="/"><i class="icon f7-icons">world</i></Link>
           <Link href="/login/">
             <i class="icon f7-icons ios-only">

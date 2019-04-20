@@ -23,7 +23,11 @@ import {
 } from 'framework7-react';
 
 import routes from '../routes';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWater } from '@fortawesome/free-solid-svg-icons'
 
+library.add(faWater)
 
 export default function (props) {
 
