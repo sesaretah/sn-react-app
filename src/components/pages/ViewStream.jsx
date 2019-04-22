@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Page, Navbar, Block, Link, Toolbar, Swiper, SwiperSlide, NavTitle, BlockTitle, List, ListItem, Segmented, Button, ListButton} from 'framework7-react';
+import { Page, Navbar, Block, Link, Toolbar, Swiper, SwiperSlide, NavTitle, BlockTitle, List, ListItem, Segmented, Button, ListButton, Row, Col} from 'framework7-react';
 
 import * as MyActions from "../../actions/MyActions";
 import StreamStore from "../../stores/StreamStore";
@@ -17,6 +17,11 @@ export default class Tour extends Component {
     this.getStream = this.getStream.bind(this);
     this.getUserStreams = this.getUserStreams.bind(this);
     this.getSocial = this.getSocial.bind(this);
+    this.userStreamsItems = this.userStreamsItems.bind(this);
+    this.changeStream = this.changeStream.bind(this);
+    this.shareToStream = this.shareToStream.bind(this);
+
+
     if (window.cordova){
       var uuid = window.device.uuid
     } else {
@@ -27,6 +32,7 @@ export default class Tour extends Component {
       streams: [],
       userStreams: [],
       shares: [],
+      selectedStream: '',
     };
   }
 
@@ -128,38 +134,21 @@ export default class Tour extends Component {
     MyActions.follow(id, type, this.state.token);
   }
 
+  userStreamsItems(){
+    var length = this.state.userStreams.length;
+    let items = []
+    for (let i = 0; i < length; i++) {
+      items.push(<option value={this.state.userStreams[i].id}>{this.state.userStreams[i].title}</option>);
+    }
+    return items
+  }
+
   share(id, type){
-    const self = this;
-    const app = self.$f7;
-    console.log(id);
-    var dynamicSheet = app.sheet.create({
-      content: '<div class="sheet-modal">'+
-      '<div class="toolbar">'+
-      '<div class="toolbar-inner">'+
-      '<div class="left"></div>'+
-      '<div class="right">'+
-      '<a class="link sheet-close">'+dict.done+'</a>'+
-      '</div>'+
-      '</div>'+
-      '</div>'+
-      '<div class="sheet-modal-inner">'+
-      '<div class="block">'+
-      '<p>Sheet created dynamically.</p>'+
-      '<p><a href="#" class="link sheet-close">Close me</a></p>'+
-      '</div>'+
-      '</div>'+
-      '</div>',
-      // Events
-      on: {
-        open: function (sheet) {
-          console.log('Sheet open');
-        },
-        opened: function (sheet) {
-          console.log('Sheet opened');
-        },
-      }
-    });
-    dynamicSheet.open();
+
+  }
+
+  shareToStream() {
+    MyActions.share(this.state.streams.id, 'Stream', this.state.selectedStream, this.state.token);
   }
 
 
@@ -196,7 +185,6 @@ export default class Tour extends Component {
   }
 
   createItem(){
-    console.log(this.state.shares[1]);
     if (this.state.shares) {
       var length = this.state.shares.length;
       let items = []
@@ -217,12 +205,28 @@ export default class Tour extends Component {
     }
   }
 
+  changeStream(event){
+    console.log(event.target.value);
+         this.setState({selectedStream: event.target.value});
+     }
+
 
 
   socialItem(){
-    console.log(this.state.streams);
     if (this.state.streams) {
       return(<Block strong className='mh-9'>
+      <Row>
+        <Col>
+          <select name="streamSelect" onChange={this.changeStream} className='custom-select custom-form'>
+            {this.userStreamsItems()}
+          </select>
+        </Col>
+        <Col>
+          <Button fill color="gray" onClick={() => this.shareToStream()}><i class="f7-icons icon-3">camera</i> {dict.upload_from_camera}</Button>
+        </Col>
+        <Col></Col>
+        <Col></Col>
+      </Row>
       <span class="price text-muted nowrp light-blue">
         <Link onClick={() => {this.follow(this.state.streams.id, 'Stream')}}>
           {this.followbt(this.state.streams.followed)}

@@ -275,6 +275,12 @@ input:not(:focus):valid ~ .floating-label{
 
 }
 
+.custom-form {
+  background-color: #fff;
+  padding: 5px;
+  width: 100%;
+}
+
 .flexcontainer {
    display: flex;
    flex-direction: column;
@@ -401,4 +407,8 @@ min-height: 30px !important;
 
 .mh-9 {
   min-height: 45px;
+}
+
+.hidden {
+  display: none;
 }

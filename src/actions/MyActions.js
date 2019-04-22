@@ -158,6 +158,20 @@ export function getShare(id, token) {
   });
 }
 
+export function share(stream_id, type, id ,token) {
+  axios.get(server + '/share?id='+id+'&type='+type+'&stream='+stream_id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    console.log(response);
+    dispatcher.dispatch({
+      type: "SHOW_SHARE",
+      data: response.data,
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
 export function getStream(id, token) {
   axios.get(server + '/view_stream/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
   .then(function (response) {

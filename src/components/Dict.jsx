@@ -92,5 +92,6 @@ export const dict = {
   'uploads': 'پیوست ها و مستندات',
   'workflow': 'گردش کار',
   'role': 'نقش',
-  'done': 'بستن'
+  'done': 'بستن',
+  'share': 'بازنشر'
 };
