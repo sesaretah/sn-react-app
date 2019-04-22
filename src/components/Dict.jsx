@@ -91,5 +91,6 @@ export const dict = {
   'formatings': 'قالب سند ',
   'uploads': 'پیوست ها و مستندات',
   'workflow': 'گردش کار',
-  'role': 'نقش'
+  'role': 'نقش',
+  'done': 'بستن'
 };

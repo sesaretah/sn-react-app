@@ -6,6 +6,7 @@ class StreamStore extends EventEmitter {
   constructor() {
     super()
     this.streams = [];
+    this.user_streams = [];
     this.shares = [];
   }
 
@@ -28,6 +29,15 @@ class StreamStore extends EventEmitter {
     this.emit("show_stream");
   }
 
+  showUserStreams(data){
+    console.log(data);
+    this.user_streams = [];
+    for (var i = 0, len = data.streams.length; i < len; ++i) {
+      this.user_streams.push(data.streams[i]);
+    }
+    this.emit("show_user_streams");
+  }
+
 
 
   getAll() {
@@ -38,6 +48,10 @@ class StreamStore extends EventEmitter {
     return this.shares
   }
 
+  getUserStreams() {
+    return this.user_streams
+  }
+
   handleActions(action) {
     switch(action.type) {
       case "SHOW_STREAMS": {
@@ -46,6 +60,10 @@ class StreamStore extends EventEmitter {
       }
       case "SHOW_STREAM": {
         this.showStream(action.data);
+        break;
+      }
+      case "SHOW_USER_STREAMS": {
+        this.showUserStreams(action.data);
         break;
       }
     }

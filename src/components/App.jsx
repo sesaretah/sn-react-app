@@ -25,10 +25,13 @@ import {
 import routes from '../routes';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faWater } from '@fortawesome/free-solid-svg-icons'
+import { faWater, faHeart, faBookmark, faLink, faRetweet } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faWater)
-
+library.add(faHeart)
+library.add(faBookmark)
+library.add(faLink)
+library.add(faRetweet)
 export default function (props) {
 
   // Framework7 parameters here

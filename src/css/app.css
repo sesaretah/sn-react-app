@@ -389,3 +389,16 @@ min-height: 30px !important;
 .mt-1 {
   margin-top: 10px;
 }
+
+.mr-1 {
+  margin-right: 5px;
+}
+
+
+.ml-1 {
+  margin-left: 5px;
+}
+
+.mh-9 {
+  min-height: 45px;
+}

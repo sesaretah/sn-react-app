@@ -101,6 +101,23 @@ export function getStreams(data) {
   });
 }
 
+
+export function getUserStreams(token) {
+  axios.get(server + '/streams',  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    console.log(response);
+    dispatcher.dispatch({
+      type: "SHOW_USER_STREAMS",
+      data: response.data,
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+
+
 export function getRoles(data) {
   axios.get(server + '/roles',  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + data.token }})
   .then(function (response) {
@@ -163,6 +180,67 @@ export function getDiscussion(id, token) {
       type: "SHOW_DISCUSSION",
       data: response.data,
     });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+
+export function likes(id, token) {
+  axios.get(server + '/likes/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    if (response.data.result){
+      dispatcher.dispatch({
+        type: "LIKE",
+        likes: response.data.likes,
+      });
+    }
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+export function like(id, type, token) {
+  axios.get(server + '/like?id='+id+'&type='+type,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    if (response.data.result){
+      dispatcher.dispatch({
+        type: "LIKE",
+        data: response.data,
+      });
+    }
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+export function bookmark(id, type, token) {
+  axios.get(server + '/bookmark?id='+id+'&type='+type,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    if (response.data.result){
+      dispatcher.dispatch({
+        type: "BOOKMARK",
+        data: response.data,
+      });
+    }
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+export function follow(id, type, token) {
+  axios.get(server + '/follow?id='+id+'&type='+type,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    if (response.data.result){
+      dispatcher.dispatch({
+        type: "FOLLOW",
+        data: response.data,
+      });
+    }
   })
   .catch(function (error) {
     console.log(error);
