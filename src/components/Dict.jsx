@@ -13,7 +13,7 @@ export const dict = {
   'signed_up_already': 'تا کنون ثبت نام نکرده اید؟',
   'new_advert': 'درج آگهی ',
   'title': 'عنوان',
-  'content': 'متن ',
+  'content': 'شرح',
   'submit': 'ثبت ',
   'upload_from_camera' : 'عکس با دوربین',
   'upload_from_gallery': 'انتخاب از گالری',
@@ -93,5 +93,13 @@ export const dict = {
   'workflow': 'گردش کار',
   'role': 'نقش',
   'done': 'بستن',
-  'share': 'بازنشر'
+  'share': 'بازنشر',
+  'educations': 'سوابق تحصیلی',
+  'bookmarks': 'نشان ها',
+  'shares': 'اشتراک ها',
+  'school_name':'نام موسسه',
+  'grad_level':'مقطع',
+  'grad_year':'سال',
+  'field':'رشته',
+  'country':'کشور',
 };

@@ -71,6 +71,14 @@ export default class HomePage extends React.Component {
 
   componentDidMount(){
     MyActions.getStreams(this.state);
+    if(!this.state.token){
+      const self = this;
+      const app = self.$f7;
+      const router = self.$f7router;
+      app.dialog.alert('باید ابتدا وارد شوید', dict.error, () => {
+        router.navigate('/login/');
+      });
+    }
   }
 
 
@@ -138,7 +146,7 @@ export default class HomePage extends React.Component {
         subtitle=""
         text={this.state.streams[i].content}
         >
-        <img slot="media" src={this.state.streams[i].cover} width="80" />
+        <img slot="media" src={this.state.streams[i].cover} width="100" />
         <span class="price text-muted nowrp light-blue">
           {this.followbt(this.state.streams[i].followed)}
           <span class='mr-1 ml-1'>{this.state.streams[i].follows}</span>
@@ -148,7 +156,6 @@ export default class HomePage extends React.Component {
           <span class='mr-1 ml-1'>{this.state.streams[i].likes}</span>
           {this.bookmarkbt(this.state.streams[i].bookmarked)}
           <span class='mr-1 ml-1'>{this.state.streams[i].bookmarks}</span>
-
         </span>
       </ListItem>);
     }

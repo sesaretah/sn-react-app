@@ -84,13 +84,19 @@ export default class HomePage extends React.Component {
     if (window.cordova){
       MyActions.updateFCM(this.state.token, this.state.uuid);
     }
-
+    if(!this.state.token){
+      const self = this;
+      const app = self.$f7;
+      const router = self.$f7router;
+      app.dialog.alert('باید ابتدا وارد شوید', dict.error, () => {
+        router.navigate('/login/');
+      });
+    }
   }
 
 
   getShares() {
     var shares = ShareStore.getAll()
-
     if (shares.length > 0){
       var joined = this.state.shares.concat(shares);
       this.setState({ shares: joined, showPreloader: false,allowInfinite: true })
@@ -105,8 +111,8 @@ export default class HomePage extends React.Component {
     this.setState({ roles: roles, current_role_id: current_role_id })
   }
 
-  reloadAdvertisements(event, done) {
-    this.setState({page: 1},  function() {
+  reloadShares(event, done) {
+    this.setState({page: 1, shares: []},  function() {
       MyActions.getShares(this.state);
       done();
     });
@@ -130,29 +136,42 @@ export default class HomePage extends React.Component {
     });
   }
 
+  shareLink(share) {
+    console.log('yyy', share);
+    switch (share.type) {
+      case 'Post':
+      return('/shares/' + share.id)
+      break;
+      case 'Profile':
+      return('/profiles/' + share.shareable_id)
+      break;
+
+    }
+  }
+
   createItem(){
     var length = this.state.shares.length;
     let items = []
     for (let i = 0; i < length; i++) {
       items.push(<ListItem
-        link={'/shares/' + this.state.shares[i].id}
+        link={this.shareLink(this.state.shares[i])}
         title={this.state.shares[i].title}
         after=""
         subtitle=""
 
         text={this.state.shares[i].content}
         >
-        <img slot="media" src={this.state.shares[i].cover} width="80" />
-          <span class="price text-muted nowrp light-blue">
-            {this.followbt(this.state.shares[i].followed)}
-            <span class='mr-1 ml-1'>{this.state.shares[i].follows}</span>
-            {this.sharebt(this.state.shares[i].shared)}
-            <span class='mr-1 ml-1'>{this.state.shares[i].shares}</span>
-            {this.likebt(this.state.shares[i].liked)}
-            <span class='mr-1 ml-1'>{this.state.shares[i].likes}</span>
-            {this.bookmarkbt(this.state.shares[i].bookmarked)}
-            <span class='mr-1 ml-1'>{this.state.shares[i].bookmarks}</span>
-          </span>
+        <img slot="media" src={this.state.shares[i].cover} width="100" />
+        <span class="price text-muted nowrp light-blue">
+          {this.followbt(this.state.shares[i].followed)}
+          <span class='mr-1 ml-1'>{this.state.shares[i].follows}</span>
+          {this.sharebt(this.state.shares[i].shared)}
+          <span class='mr-1 ml-1'>{this.state.shares[i].shares}</span>
+          {this.likebt(this.state.shares[i].liked)}
+          <span class='mr-1 ml-1'>{this.state.shares[i].likes}</span>
+          {this.bookmarkbt(this.state.shares[i].bookmarked)}
+          <span class='mr-1 ml-1'>{this.state.shares[i].bookmarks}</span>
+        </span>
 
       </ListItem>);
     }
@@ -160,37 +179,37 @@ export default class HomePage extends React.Component {
   }
 
 
-    likebt(liked) {
-      if (liked) {
-        return(<FontAwesomeIcon icon="heart" size="lg" color="#bf4141"/>)
-      } else {
-        return(<FontAwesomeIcon icon="heart" size="lg" color="#eee"/>)
-      }
+  likebt(liked) {
+    if (liked) {
+      return(<FontAwesomeIcon icon="heart" size="lg" color="#bf4141"/>)
+    } else {
+      return(<FontAwesomeIcon icon="heart" size="lg" color="#eee"/>)
     }
+  }
 
-    bookmarkbt(bookmarked) {
-      if (bookmarked) {
-        return(<FontAwesomeIcon icon="bookmark" size="lg" color="#a241bf"/>)
-      } else {
-        return(<FontAwesomeIcon icon="bookmark" size="lg" color="#eee"/>)
-      }
+  bookmarkbt(bookmarked) {
+    if (bookmarked) {
+      return(<FontAwesomeIcon icon="bookmark" size="lg" color="#a241bf"/>)
+    } else {
+      return(<FontAwesomeIcon icon="bookmark" size="lg" color="#eee"/>)
     }
+  }
 
-    followbt(followed) {
-      if (followed) {
-        return(<FontAwesomeIcon icon="link" size="lg" color="#30b749"/>)
-      } else {
-        return(<FontAwesomeIcon icon="link" size="lg" color="#eee"/>)
-      }
+  followbt(followed) {
+    if (followed) {
+      return(<FontAwesomeIcon icon="link" size="lg" color="#30b749"/>)
+    } else {
+      return(<FontAwesomeIcon icon="link" size="lg" color="#eee"/>)
     }
+  }
 
-    sharebt(shared) {
-      if (shared) {
-        return(<FontAwesomeIcon icon="retweet" size="lg" color="#467fcf"/>)
-      } else {
-        return(<FontAwesomeIcon icon="retweet" size="lg" color="#eee"/>)
-      }
+  sharebt(shared) {
+    if (shared) {
+      return(<FontAwesomeIcon icon="retweet" size="lg" color="#467fcf"/>)
+    } else {
+      return(<FontAwesomeIcon icon="retweet" size="lg" color="#eee"/>)
     }
+  }
 
 
 
@@ -205,21 +224,21 @@ export default class HomePage extends React.Component {
 
   changeRole(e){
     this.setState({current_role_id: e.target.value}, function () {
-    MyActions.changeRole(this.state);
-  });
+      MyActions.changeRole(this.state);
+    });
   }
 
   changedRole(){
     var current_role_id = UserStore.getCurrentRole();
     this.setState({current_role_id: current_role_id, shares: []}, function () {
       MyActions.getShares(this.state);
-  });
+    });
   }
 
   render() {
 
     return(
-      <Page colorTheme="blue" className="gray" ptr onPtrRefresh={this.reloadAdvertisements.bind(this)}
+      <Page colorTheme="blue" className="gray" ptr onPtrRefresh={this.reloadShares.bind(this)}
         infinite
         infiniteDistance={10}
         infinitePreloader={this.state.showPreloader}

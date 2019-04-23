@@ -71,9 +71,8 @@ export default class Login extends React.Component {
     const self = this;
     const app = self.$f7;
     const router = self.$f7router;
-    console.log(UserStore.getToken());
     window.localStorage.setItem('token', UserStore.getToken());
-    router.back();
+    router.navigate('/');
     window.plugins.toast.showWithOptions({
       message: 'خوش آمدید ',
       duration: "short", // 2000 ms
@@ -148,10 +147,7 @@ export default class Login extends React.Component {
           <Block>
             <Button raised big fill  onClick={this.signIn.bind(this)}>{dict.sign_in}</Button>
           </Block>
-          <Block>
-          <span> {dict.signed_up_already} </span>
-          <Link href="/sign_up/">{dict.sign_up}</Link>
-          </Block>
+
         </List>
       </React.Fragment>
     );
@@ -167,7 +163,7 @@ export default class Login extends React.Component {
         </List>
 
         <List>
-          <ListItem title={dict.my_reservations} link="/my_reservations/"  badge={this.state.unseens} badgeColor="red"></ListItem>
+          <ListItem title={dict.bookmarks} link="/profiles/"  badge={this.state.unseens} badgeColor="red"></ListItem>
         </List>
 
 

@@ -157,33 +157,33 @@ export default class Tour extends Component {
 
   likebt(liked) {
     if (liked) {
-      return(<FontAwesomeIcon icon="heart" size="lg" color="#bf4141"/>)
+      return(<FontAwesomeIcon icon="heart" size="2x" color="#bf4141"/>)
     } else {
-      return(<FontAwesomeIcon icon="heart" size="lg" color="#eee"/>)
+      return(<FontAwesomeIcon icon="heart" size="2x" color="#eee"/>)
     }
   }
 
   bookmarkbt(bookmarked) {
     if (bookmarked) {
-      return(<FontAwesomeIcon icon="bookmark" size="lg" color="#a241bf"/>)
+      return(<FontAwesomeIcon icon="bookmark" size="2x" color="#a241bf"/>)
     } else {
-      return(<FontAwesomeIcon icon="bookmark" size="lg" color="#eee"/>)
+      return(<FontAwesomeIcon icon="bookmark" size="2x" color="#eee"/>)
     }
   }
 
   followbt(followed) {
     if (followed) {
-      return(<FontAwesomeIcon icon="link" size="lg" color="#30b749"/>)
+      return(<FontAwesomeIcon icon="link" size="2x" color="#30b749"/>)
     } else {
-      return(<FontAwesomeIcon icon="link" size="lg" color="#eee"/>)
+      return(<FontAwesomeIcon icon="link" size="2x" color="#eee"/>)
     }
   }
 
   sharebt(shared) {
     if (shared) {
-      return(<FontAwesomeIcon icon="retweet" size="lg" color="#467fcf"/>)
+      return(<FontAwesomeIcon icon="retweet" size="2x" color="#467fcf"/>)
     } else {
-      return(<FontAwesomeIcon icon="retweet" size="lg" color="#eee"/>)
+      return(<FontAwesomeIcon icon="retweet" size="2x" color="#eee"/>)
     }
   }
 
@@ -200,8 +200,17 @@ export default class Tour extends Component {
 
           text={this.state.shares[i].content}
           >
-          <img slot="media" src={this.state.shares[i].cover} width="80" />
-          <span class="price text-muted nowrp light-blue">{this.state.shares[i].workflow} > {this.state.shares[i].workflow_state}</span>
+          <img slot="media" src={this.state.shares[i].cover} width="100" />
+            <span class="price text-muted nowrp light-blue">
+              {this.followbt(this.state.shares[i].followed)}
+              <span class='mr-1 ml-1'>{this.state.shares[i].follows}</span>
+              {this.sharebt(this.state.shares[i].shared)}
+              <span class='mr-1 ml-1'>{this.state.shares[i].shares}</span>
+              {this.likebt(this.state.shares[i].liked)}
+              <span class='mr-1 ml-1'>{this.state.shares[i].likes}</span>
+              {this.bookmarkbt(this.state.shares[i].bookmarked)}
+              <span class='mr-1 ml-1'>{this.state.shares[i].bookmarks}</span>
+            </span>
         </ListItem>);
       }
       return items
@@ -228,8 +237,6 @@ export default class Tour extends Component {
           <Col>
             <Button fill onClick={() => this.shareToStream()}>{dict.submit}</Button>
           </Col>
-          <Col></Col>
-          <Col></Col>
         </Row>
       </Block>
 

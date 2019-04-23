@@ -1,8 +1,7 @@
 import dispatcher from "../dispatcher";
 import axios from 'axios';
-const server='http://localhost:3000/api/v2';
-//const server='http://194.225.14.164/api';
-//const server='http://sanatik.ir:3000/api';
+//const server='http://localhost:3000/api/v2';
+const server='https://sn.ut.ac.ir/api/v2';
 
 export function updateFCM(token, uuid) {
   window.FirebasePlugin.getToken(function (fcm_token) {
@@ -192,6 +191,48 @@ export function getDiscussion(id, token) {
     console.log(response);
     dispatcher.dispatch({
       type: "SHOW_DISCUSSION",
+      data: response.data,
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+export function getProfile(id, token) {
+  axios.get(server + '/view_profile/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    console.log(response);
+    dispatcher.dispatch({
+      type: "SHOW_PROFILE",
+      data: response.data,
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+export function getEducations(id, token) {
+  axios.get(server + '/view_educations/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    console.log(response);
+    dispatcher.dispatch({
+      type: "SHOW_EDUCATIONS",
+      data: response.data,
+    });
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
+
+export function getProfileBookmarks(id, token) {
+  axios.get(server + '/view_profile_bookmarks/'+id,  { headers: {'Content-Type': 'application/json', 'Authorization': "bearer " + token }})
+  .then(function (response) {
+    console.log(response);
+    dispatcher.dispatch({
+      type: "SHOW_PROFILE_BOOKMARKS",
       data: response.data,
     });
   })

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Page, Navbar, Block, Link, Toolbar, Swiper, SwiperSlide, NavTitle, BlockTitle, List, ListItem, Segmented, Button, ListButton, Row, Col} from 'framework7-react';
 
 import * as MyActions from "../../actions/MyActions";
-import ShareStore from "../../stores/ShareStore";
+import ProfileStore from "../../stores/ProfileStore";
 import StreamStore from "../../stores/StreamStore";
 import SocialStore from "../../stores/SocialStore";
 import { dict} from '../Dict';
@@ -15,12 +15,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 export default class Tour extends Component {
   constructor() {
     super();
-    this.getShare = this.getShare.bind(this);
+    this.getProfile = this.getProfile.bind(this);
+    this.getProfileBookmarks = this.getProfileBookmarks.bind(this);
     this.getUserStreams = this.getUserStreams.bind(this);
-    this.getSocial = this.getSocial.bind(this);
-    this.userStreamsItems = this.userStreamsItems.bind(this);
-    this.changeStream = this.changeStream.bind(this);
-    this.shareToStream = this.shareToStream.bind(this);
 
     if (window.cordova){
       var uuid = window.device.uuid
@@ -29,41 +26,53 @@ export default class Tour extends Component {
     }
     this.state = {
       token: window.localStorage.getItem('token'),
+      profiles: [],
       shares: [],
-      discussions: [],
       userStreams: [],
       selectedStream: '',
+      profile_bookmarks: [],
       shareActive: false
     };
   }
 
   componentWillMount() {
-    ShareStore.on("show_share", this.getShare);
+    ProfileStore.on("show_profile", this.getProfile);
+    ProfileStore.on("show_profile_bookmarks", this.getProfileBookmarks);
     StreamStore.on("show_user_streams", this.getUserStreams);
     SocialStore.on("social_event", this.getSocial);
   }
 
   componentWillUnmount() {
-    ShareStore.removeListener("show_share", this.getShare);
+    ProfileStore.removeListener("show_profile", this.getProfile);
+    ProfileStore.removeListener("show_profile_bookmarks", this.getProfileBookmarks);
     StreamStore.removeListener("show_user_streams", this.getUserStreams);
     SocialStore.removeListener("social_event", this.getSocial);
   }
 
+
+
   componentDidMount(){
-    MyActions.getShare(this.$f7route.params['shareId'], this.state.token);
+    MyActions.getProfile(this.$f7route.params['profileId'], this.state.token);
+    MyActions.getProfileBookmarks(this.$f7route.params['profileId'], this.state.token);
     MyActions.getUserStreams(this.state.token);
   }
 
 
-  getShare() {
-    var shares = ShareStore.getAll();
-    var discussions = ShareStore.getDiscussions();
-    console.log('shares', shares);
+  getProfile() {
+    var profiles = ProfileStore.getAll();
     this.setState({
-      shares: shares[0],
-      discussions: discussions
+      profiles: profiles[0]
     });
   }
+
+  getProfileBookmarks() {
+    var profile_bookmarks = ProfileStore.getProfileBookmarks();
+    console.log('profile_bookmarks', profile_bookmarks);
+    this.setState({
+      profile_bookmarks: profile_bookmarks
+    });
+  }
+
 
   getUserStreams() {
     var streams = StreamStore.getUserStreams();
@@ -73,30 +82,48 @@ export default class Tour extends Component {
     });
   }
 
+
+  profileTitle(){
+    if (this.state.profiles) {
+      return(
+        <List mediaList>
+        <ListItem
+          title={this.state.profiles.title}
+          after=""
+          subtitle=""
+
+          text={this.state.profiles.content}
+          >
+          <img slot="media" src={this.state.profiles.cover} width="100" />
+        </ListItem>
+        </List>
+      )
+    }
+  }
+
+
   getSocial(){
     var social = SocialStore.getSocial()
-    console.log('social', social);
-    if (this.state.shares.id == social['uuid'] ){
+    if (this.state.profiles.id == social['uuid'] ){
       switch(social['action']) {
         case 'Like':
-        this.state.shares.liked = social['liked']
-        this.state.shares.likes = social['likes']
+        this.state.profiles.liked = social['liked']
+        this.state.profiles.likes = social['likes']
         this.forceUpdate()
         break;
         case 'Bookmark':
-        this.state.shares.bookmarked = social['bookmarked']
-        this.state.shares.bookmarks = social['bookmarks']
+        this.state.profiles.bookmarked = social['bookmarked']
+        this.state.profiles.bookmarks = social['bookmarks']
         this.forceUpdate()
         break;
         case 'Follow':
-        this.state.shares.followed = social['followed']
-        this.state.shares.follows = social['follows']
+        this.state.profiles.followed = social['followed']
+        this.state.profiles.follows = social['follows']
         this.forceUpdate()
         break;
       }
     }
   }
-
 
   like(id, type){
     MyActions.like(id, type, this.state.token);
@@ -125,9 +152,10 @@ export default class Tour extends Component {
     });
   }
 
-  shareToStream() {
-    MyActions.share(this.state.streams.id, 'Stream', this.state.selectedStream, this.state.token);
+  shareToProfile() {
+    MyActions.share(this.state.profiles.id, 'Profile', this.state.selectedProfile, this.state.token);
   }
+
 
   likebt(liked) {
     if (liked) {
@@ -161,47 +189,12 @@ export default class Tour extends Component {
     }
   }
 
-
-  shareTitle(){
-    if (this.state.shares) {
-      return(
-        <React.Fragment>
-          <div class="block-title">{dict.title}</div>
-          <Block strong>{this.state.shares.title}</Block>
-        </React.Fragment>
-      )
-    }
-  }
-
-  shareContent(){
-    if (this.state.shares) {
-      return(
-        <React.Fragment>
-          <div class="block-title">{dict.content}</div>
-          <Block strong>
-            <div dangerouslySetInnerHTML={{__html: this.state.shares.content}}></div>
-          </Block>
-        </React.Fragment>
-      )
-    }
-  }
-
   createItem(){
-    if (this.state.discussions) {
-      var length = this.state.discussions.length;
+    if (this.state.profile_bookmarks) {
+      var length = this.state.profile_bookmarks.length;
       let items = []
       for (let i = 0; i < length; i++) {
-        items.push(<ListItem
-          link={'/discussions/' + this.state.discussions[i].id}
-          title={this.state.discussions[i].title}
-          after=""
-          subtitle=""
-
-          text={this.state.discussions[i].content}
-          >
-          <img slot="media" src={this.state.discussions[i].cover} width="80" />
-          <span class="price text-muted nowrp light-blue">{this.state.discussions[i].workflow} > {this.state.discussions[i].workflow_state}</span>
-        </ListItem>);
+        items.push(  );
       }
       return items
     }
@@ -214,8 +207,7 @@ export default class Tour extends Component {
 
 
   socialItem(){
-            console.log('xxx', this.state.shares);
-    if (this.state.shares) {
+    if (this.state.profiles) {
       return(<Block strong className='mh-9 pb-6'>
       <Block  className={this.state.shareActive ? 'show' : 'hidden'}>
         <Row>
@@ -225,40 +217,40 @@ export default class Tour extends Component {
             </select>
           </Col>
           <Col>
-            <Button fill onClick={() => this.shareToStream()}>{dict.submit}</Button>
+            <Button fill onClick={() => this.shareToProfile()}>{dict.submit}</Button>
           </Col>
         </Row>
       </Block>
 
       <span class="price text-muted nowrp light-blue">
-
-        <Link onClick={() => {this.follow(this.state.shares.id, this.state.shares.type)}}>
-          {this.followbt(this.state.shares.followed)}
+        <Link onClick={() => {this.follow(this.state.profiles.id, 'Profile')}}>
+          {this.followbt(this.state.profiles.followed)}
         </Link>
-        <span class='mr-1 ml-1'>{this.state.shares.follows}</span>
-        <Link onClick={() => {this.share(this.state.shares.id, this.state.shares.type)}}>
-          {this.sharebt(this.state.shares.shared)}
+        <span class='mr-1 ml-1'>{this.state.profiles.follows}</span>
+        <Link onClick={() => {this.share(this.state.profiles.id, 'Profile')}}>
+          {this.sharebt(this.state.profiles.shared)}
         </Link>
-        <span class='mr-1 ml-1'>{this.state.shares.shares}</span>
-        <Link onClick={() => {this.like(this.state.shares.id, this.state.shares.type)}}>
-          {this.likebt(this.state.shares.liked)}
+        <span class='mr-1 ml-1'>{this.state.profiles.shares}</span>
+        <Link onClick={() => {this.like(this.state.profiles.id, 'Profile')}}>
+          {this.likebt(this.state.profiles.liked)}
         </Link>
-        <span class='mr-1 ml-1'>{this.state.shares.likes}</span>
-        <Link onClick={() => {this.bookmark(this.state.shares.id, this.state.shares.type)}}>
-          {this.bookmarkbt(this.state.shares.bookmarked)}
+        <span class='mr-1 ml-1'>{this.state.profiles.likes}</span>
+        <Link onClick={() => {this.bookmark(this.state.profiles.id, 'Profile')}}>
+          {this.bookmarkbt(this.state.profiles.bookmarked)}
         </Link>
-        <span class='mr-1 ml-1'>{this.state.shares.bookmarks}</span>
+        <span class='mr-1 ml-1'>{this.state.profiles.bookmarks}</span>
       </span>
     </Block>);
   }
 }
 
 
+
 render() {
   return (
     <Page colorTheme="blue" className="gray">
       <Navbar>
-        <Link onClick={() => this.$f7router.back()}>
+      <Link onClick={() => this.$f7router.back()}>
           <i class="f7-icons color-white">chevron_right</i>
           <div class='custom-category teal-text'>{dict.back}</div>
         </Link>
@@ -267,18 +259,15 @@ render() {
         </NavTitle>
       </Navbar>
 
+
+
       {this.socialItem()}
-      {this.shareTitle()}
-      {this.shareContent()}
-
-
-      <List mediaList>
-        {this.createItem()}
-      </List>
+      {this.profileTitle()}
+      {this.createItem()}
 
 
       <Toolbar tabbar labels color="blue" bottomMd={true}>
-        <Link href="/streams/"><FontAwesomeIcon icon="water" size="lg" color="#3DB39E"/></Link>
+        <Link href="/profiles/"><FontAwesomeIcon icon="water" size="lg" color="#3DB39E"/></Link>
         <Link href="/"><i class="icon f7-icons">world</i></Link>
         <Link href="/login/">
           <i class="icon f7-icons ios-only">

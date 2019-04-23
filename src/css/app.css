@@ -8,6 +8,7 @@
 }
 .ios body {
   font-family: iransans;
+  color: #495057;
 }
 
 .custom-file-input
@@ -422,4 +423,9 @@ min-height: 30px !important;
 
 .show {
     display: block;
+}
+
+.ios .media-list .item-media, .ios li.media-item .item-media {
+     padding-top: 2px;
+     padding-bottom: 2px;
 }

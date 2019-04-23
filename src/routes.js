@@ -6,6 +6,10 @@ import Stream from './components/pages/Stream';
 import ViewShare from './components/pages/ViewShare';
 import ViewStream from './components/pages/ViewStream';
 import ViewDiscussion from './components/pages/ViewDiscussion';
+import ViewProfile from './components/pages/ViewProfile';
+import ProfileEducations from './components/pages/ProfileEducations';
+import ProfileBookmarks from './components/pages/ProfileBookmarks';
+
 
 export default [
   {
@@ -35,6 +39,18 @@ export default [
   {
     path: '/discussions/:discussionId',
     component: ViewDiscussion,
+  },
+  {
+    path: '/profiles/:profileId',
+    component: ViewProfile,
+  },
+  {
+    path: '/profiles/profile_educations/:profileId',
+    component: ProfileEducations,
+  },
+  {
+    path: '/profiles/profile_bookmarks/:profileId',
+    component: ProfileBookmarks,
   },
   {
     path: '(.*)',
