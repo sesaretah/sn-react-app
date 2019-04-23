@@ -40,7 +40,6 @@ export default class HomePage extends React.Component {
   constructor() {
     super();
     this.getStreams = this.getStreams.bind(this);
-    this.getSocial = this.getSocial.bind(this);
     if (window.cordova){
       var uuid = window.device.uuid
     } else {
@@ -63,13 +62,11 @@ export default class HomePage extends React.Component {
   componentWillMount() {
     StreamStore.on("show_streams", this.getStreams);
     StreamStore.on("load", this.getStreams);
-    SocialStore.on("social_event", this.getSocial);
   }
 
   componentWillUnmount() {
     StreamStore.removeListener("show_streams", this.getStreams);
     StreamStore.removeListener("load", this.getStreams);
-    SocialStore.removeListener("social_event", this.getSocial);
   }
 
   componentDidMount(){
@@ -95,44 +92,6 @@ export default class HomePage extends React.Component {
 
   }
 
-  getSocial(){
-    var social = SocialStore.getSocial()
-    var length = this.state.streams.length;
-    for (let i = 0; i < length; i++) {
-      if (this.state.streams[i].id == social['uuid'] ){
-        switch(social['action']) {
-          case 'Like':
-          this.state.streams[i].liked = social['liked']
-          this.state.streams[i].likes = social['likes']
-          this.forceUpdate()
-          break;
-          case 'Bookmark':
-          this.state.streams[i].bookmarked = social['bookmarked']
-          this.state.streams[i].bookmarks = social['bookmarks']
-          this.forceUpdate()
-          break;
-          case 'Follow':
-          this.state.streams[i].followed = social['followed']
-          this.state.streams[i].follows = social['follows']
-          this.forceUpdate()
-          break;
-
-        }
-      }
-    }
-  }
-
-  like(id, type){
-    MyActions.like(id, type, this.state.token);
-  }
-
-  bookmark(id, type){
-    MyActions.bookmark(id, type, this.state.token);
-  }
-
-  follow(id, type){
-    MyActions.follow(id, type, this.state.token);
-  }
 
 
   likebt(liked) {
@@ -159,6 +118,14 @@ export default class HomePage extends React.Component {
     }
   }
 
+  sharebt(shared) {
+    if (shared) {
+      return(<FontAwesomeIcon icon="retweet" size="lg" color="#467fcf"/>)
+    } else {
+      return(<FontAwesomeIcon icon="retweet" size="lg" color="#eee"/>)
+    }
+  }
+
 
   createItem(){
     var length = this.state.streams.length;
@@ -173,18 +140,14 @@ export default class HomePage extends React.Component {
         >
         <img slot="media" src={this.state.streams[i].cover} width="80" />
         <span class="price text-muted nowrp light-blue">
-          <Link onClick={() => {this.like(this.state.streams[i].id, 'Stream')}}>
-            {this.likebt(this.state.streams[i].liked)}
-          </Link>
-          <span class='mr-1 ml-1'>{this.state.streams[i].likes}</span>
-          <Link onClick={() => {this.bookmark(this.state.streams[i].id, 'Stream')}}>
-            {this.bookmarkbt(this.state.streams[i].bookmarked)}
-          </Link>
-          <span class='mr-1 ml-1'>{this.state.streams[i].bookmarks}</span>
-          <Link onClick={() => {this.follow(this.state.streams[i].id, 'Stream')}}>
-            {this.followbt(this.state.streams[i].followed)}
-          </Link>
+          {this.followbt(this.state.streams[i].followed)}
           <span class='mr-1 ml-1'>{this.state.streams[i].follows}</span>
+          {this.sharebt(this.state.streams[i].shared)}
+          <span class='mr-1 ml-1'>{this.state.streams[i].shares}</span>
+          {this.likebt(this.state.streams[i].liked)}
+          <span class='mr-1 ml-1'>{this.state.streams[i].likes}</span>
+          {this.bookmarkbt(this.state.streams[i].bookmarked)}
+          <span class='mr-1 ml-1'>{this.state.streams[i].bookmarks}</span>
 
         </span>
       </ListItem>);

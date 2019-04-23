@@ -27,6 +27,7 @@ import {
 import * as MyActions from "../../actions/MyActions";
 import ShareStore from "../../stores/ShareStore";
 import UserStore from "../../stores/UserStore";
+import SocialStore from "../../stores/SocialStore";
 import { dict} from '../Dict';
 import logo from  "../../images/logo.png";
 import Moment from 'react-moment';
@@ -142,11 +143,54 @@ export default class HomePage extends React.Component {
         text={this.state.shares[i].content}
         >
         <img slot="media" src={this.state.shares[i].cover} width="80" />
-        <span class="price text-muted nowrp light-blue">{this.state.shares[i].workflow} > {this.state.shares[i].workflow_state}</span>
+          <span class="price text-muted nowrp light-blue">
+            {this.followbt(this.state.shares[i].followed)}
+            <span class='mr-1 ml-1'>{this.state.shares[i].follows}</span>
+            {this.sharebt(this.state.shares[i].shared)}
+            <span class='mr-1 ml-1'>{this.state.shares[i].shares}</span>
+            {this.likebt(this.state.shares[i].liked)}
+            <span class='mr-1 ml-1'>{this.state.shares[i].likes}</span>
+            {this.bookmarkbt(this.state.shares[i].bookmarked)}
+            <span class='mr-1 ml-1'>{this.state.shares[i].bookmarks}</span>
+          </span>
+
       </ListItem>);
     }
     return items
   }
+
+
+    likebt(liked) {
+      if (liked) {
+        return(<FontAwesomeIcon icon="heart" size="lg" color="#bf4141"/>)
+      } else {
+        return(<FontAwesomeIcon icon="heart" size="lg" color="#eee"/>)
+      }
+    }
+
+    bookmarkbt(bookmarked) {
+      if (bookmarked) {
+        return(<FontAwesomeIcon icon="bookmark" size="lg" color="#a241bf"/>)
+      } else {
+        return(<FontAwesomeIcon icon="bookmark" size="lg" color="#eee"/>)
+      }
+    }
+
+    followbt(followed) {
+      if (followed) {
+        return(<FontAwesomeIcon icon="link" size="lg" color="#30b749"/>)
+      } else {
+        return(<FontAwesomeIcon icon="link" size="lg" color="#eee"/>)
+      }
+    }
+
+    sharebt(shared) {
+      if (shared) {
+        return(<FontAwesomeIcon icon="retweet" size="lg" color="#467fcf"/>)
+      } else {
+        return(<FontAwesomeIcon icon="retweet" size="lg" color="#eee"/>)
+      }
+    }
 
 
 

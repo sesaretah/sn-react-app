@@ -33,6 +33,7 @@ export default class Tour extends Component {
       userStreams: [],
       shares: [],
       selectedStream: '',
+      shareActive: false
     };
   }
 
@@ -144,7 +145,9 @@ export default class Tour extends Component {
   }
 
   share(id, type){
-
+    this.setState({
+      shareActive: true
+    });
   }
 
   shareToStream() {
@@ -214,28 +217,31 @@ export default class Tour extends Component {
 
   socialItem(){
     if (this.state.streams) {
-      return(<Block strong className='mh-9'>
-      <Row>
-        <Col>
-          <select name="streamSelect" onChange={this.changeStream} className='custom-select custom-form'>
-            {this.userStreamsItems()}
-          </select>
-        </Col>
-        <Col>
-          <Button fill color="gray" onClick={() => this.shareToStream()}><i class="f7-icons icon-3">camera</i> {dict.upload_from_camera}</Button>
-        </Col>
-        <Col></Col>
-        <Col></Col>
-      </Row>
+      return(<Block strong className='mh-9 pb-6'>
+      <Block  className={this.state.shareActive ? 'show' : 'hidden'}>
+        <Row>
+          <Col>
+            <select name="streamSelect" onChange={this.changeStream} className='custom-select custom-form'>
+              {this.userStreamsItems()}
+            </select>
+          </Col>
+          <Col>
+            <Button fill onClick={() => this.shareToStream()}>{dict.submit}</Button>
+          </Col>
+          <Col></Col>
+          <Col></Col>
+        </Row>
+      </Block>
+
       <span class="price text-muted nowrp light-blue">
         <Link onClick={() => {this.follow(this.state.streams.id, 'Stream')}}>
           {this.followbt(this.state.streams.followed)}
         </Link>
         <span class='mr-1 ml-1'>{this.state.streams.follows}</span>
         <Link onClick={() => {this.share(this.state.streams.id, 'Stream')}}>
-          {this.sharebt(this.state.streams.followed)}
+          {this.sharebt(this.state.streams.shared)}
         </Link>
-        <span class='mr-1 ml-1'>{this.state.streams.follows}</span>
+        <span class='mr-1 ml-1'>{this.state.streams.shares}</span>
         <Link onClick={() => {this.like(this.state.streams.id, 'Stream')}}>
           {this.likebt(this.state.streams.liked)}
         </Link>
@@ -264,20 +270,6 @@ render() {
         </NavTitle>
       </Navbar>
 
-      <div class="sheet-modal my-sheet">
-        <div class="toolbar">
-          <div class="toolbar-inner">
-            <div class="left"></div>
-            <div class="right"><a class="link sheet-close" href="#">Done</a></div>
-          </div>
-        </div>
-        <div class="sheet-modal-inner">
-          <div class="block">
-            <h4>Info</h4>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ac diam ac quam euismod porta vel a nunc. Quisque sodales scelerisque est, at porta justo cursus ac.</p>
-          </div>
-        </div>
-      </div>
 
 
       {this.socialItem()}
